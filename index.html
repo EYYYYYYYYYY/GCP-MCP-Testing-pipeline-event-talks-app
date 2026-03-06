@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Talks 2026</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        #search {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .schedule {
+            list-style: none;
+            padding: 0;
+        }
+
+        .schedule-item {
+            display: flex;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-left: 5px solid #007bff;
+            background-color: #f9f9f9;
+        }
+
+        .schedule-item.lunch {
+            border-left-color: #28a745;
+        }
+
+        .time {
+            font-weight: bold;
+            width: 120px;
+        }
+
+        .details {
+            flex-grow: 1;
+        }
+
+        .details h3 {
+            margin-top: 0;
+        }
+
+        .speakers {
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        .category {
+            display: inline-block;
+            background-color: #007bff;
+            color: #fff;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tech Talks 2026</h1>
+        <input type="text" id="search" placeholder="Search by category...">
+        <ul id="schedule" class="schedule"></ul>
+    </div>
+
+    <script>
+        const talks = [
+            {
+                "title": "The Future of JavaScript",
+                "speakers": ["Jane Doe"],
+                "category": ["JavaScript", "Web Development"],
+                "description": "A deep dive into the next features of JavaScript and what they mean for web developers."
+            },
+            {
+                "title": "Building Scalable APIs with Node.js",
+                "speakers": ["John Smith"],
+                "category": ["Node.js", "APIs", "Backend"],
+                "description": "Learn how to design and build APIs that can handle millions of requests."
+            },
+            {
+                "title": "CSS Grid and Flexbox: The Ultimate Showdown",
+                "speakers": ["Emily White", "Chris Green"],
+                "category": ["CSS", "Frontend"],
+                "description": "A practical comparison of CSS Grid and Flexbox, and when to use each."
+            },
+            {
+                "title": "Introduction to Machine Learning with Python",
+                "speakers": ["David Black"],
+                "category": ["Machine Learning", "Python", "Data Science"],
+                "description": "Get started with machine learning using Python's most popular libraries."
+            },
+            {
+                "title": "The Rise of Serverless Architectures",
+                "speakers": ["Sarah Blue"],
+                "category": ["Serverless", "Cloud", "Architecture"],
+                "description": "Explore the benefits and challenges of serverless and how to build your first serverless application."
+            },
+            {
+                "title": "Cybersecurity in the Modern Web",
+                "speakers": ["Michael Brown", "Olivia Grey"],
+                "category": ["Cybersecurity", "Web Development"],
+                "description": "An overview of the most common security threats on the web and how to protect your applications."
+            }
+        ];
+
+        const scheduleContainer = document.getElementById('schedule');
+        const searchInput = document.getElementById('search');
+
+        function generateSchedule(filter = '') {
+            scheduleContainer.innerHTML = '';
+            let currentTime = new Date();
+            currentTime.setHours(10, 0, 0, 0);
+
+            const filteredTalks = talks.filter(talk =>
+                talk.category.some(cat => cat.toLowerCase().includes(filter.toLowerCase()))
+            );
+
+            filteredTalks.forEach((talk, index) => {
+                if (index === 3) {
+                    const lunchTimeStart = new Date(currentTime.getTime());
+                    const lunchTimeEnd = new Date(currentTime.getTime() + 60 * 60 * 1000);
+                    const lunchItem = document.createElement('li');
+                    lunchItem.className = 'schedule-item lunch';
+                    lunchItem.innerHTML = `
+                        <div class="time">${formatTime(lunchTimeStart)} - ${formatTime(lunchTimeEnd)}</div>
+                        <div class="details"><h3>Lunch Break</h3></div>
+                    `;
+                    scheduleContainer.appendChild(lunchItem);
+                    currentTime.setTime(lunchTimeEnd.getTime());
+                }
+
+                const startTime = new Date(currentTime.getTime());
+                const endTime = new Date(currentTime.getTime() + 60 * 60 * 1000);
+
+                const listItem = document.createElement('li');
+                listItem.className = 'schedule-item';
+                listItem.innerHTML = `
+                    <div class="time">${formatTime(startTime)} - ${formatTime(endTime)}</div>
+                    <div class="details">
+                        <h3>${talk.title}</h3>
+                        <div class="speakers">${talk.speakers.join(', ')}</div>
+                        <div class="description">${talk.description}</div>
+                        <div>${talk.category.map(cat => `<span class="category">${cat}</span>`).join('')}</div>
+                    </div>
+                `;
+                scheduleContainer.appendChild(listItem);
+                currentTime.setTime(endTime.getTime() + 10 * 60 * 1000);
+            });
+        }
+
+        function formatTime(date) {
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            generateSchedule(e.target.value);
+        });
+
+        generateSchedule();
+    </script>
+</body>
+</html>
